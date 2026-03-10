@@ -4,12 +4,12 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState(() => {
-        const saved = localStorage.getItem('sheon_cart');
+        const saved = localStorage.getItem('talabatak_cart');
         try { return saved ? JSON.parse(saved) : []; } catch { return []; }
     });
 
     useEffect(() => {
-        localStorage.setItem('sheon_cart', JSON.stringify(cart));
+        localStorage.setItem('talabatak_cart', JSON.stringify(cart));
     }, [cart]);
 
     const subtotal = cart.reduce((acc, item) => {

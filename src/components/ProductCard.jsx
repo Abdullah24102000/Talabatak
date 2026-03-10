@@ -25,23 +25,23 @@ const ProductCard = ({ product }) => {
         }
     };
 
-    // تحديد اسم القسم بالعربي بناءً على الـ Category ID
+    // تحديث دالة الأقسام لتتماشى مع التعديلات الجديدة
     const getCategoryName = (catId) => {
         switch(catId) {
-            case 'SUPERMARKET': return 'سوبر ماركت';
             case 'RESTAURANTS': return 'مطاعم';
-            case 'PERSONAL_DELIVERY': return 'توصيل شخصي';
+            case 'SWEETS': return 'حلويات';
+            case 'PERSONAL_DELIVERY': return 'توصيل سكوتر';
             default: return 'قسم عام';
         }
     };
 
     return (
         <div 
-            className="relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden group hover:border-hot-pink/30 transition-all duration-500" 
+            className="relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden group hover:border-orange-500/30 transition-all duration-500" 
             dir="rtl"
         >
             
-            {/* زر المفضلة - مكانه فوق على اليمين في الـ RTL */}
+            {/* زر المفضلة - تم تغيير اللون للبرتقالي عند التفعيل */}
             <button 
                 onClick={handleFavorite}
                 type="button"
@@ -49,12 +49,12 @@ const ProductCard = ({ product }) => {
             >
                 <Heart 
                     size={16} 
-                    fill={isFavorite ? "#ff0266" : "none"} 
-                    color={isFavorite ? "#ff0266" : "white"} 
+                    fill={isFavorite ? "#f97316" : "none"} // لون برتقالي Orange-500
+                    color={isFavorite ? "#f97316" : "white"} 
                 />
             </button>
 
-            {/* منطقة الصورة - جعلتها مناسبة لصور المنتجات الاستهلاكية */}
+            {/* منطقة الصورة */}
             <div className="relative aspect-square overflow-hidden bg-white/5 flex items-center justify-center p-4">
                 <img
                     src={Array.isArray(product.ImgUrl) ? product.ImgUrl[0] : product.ImgUrl}
@@ -65,8 +65,8 @@ const ProductCard = ({ product }) => {
 
                 {isSoldOut && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] z-10">
-                        <div className="bg-red-600 text-white px-6 py-2 rounded-full font-black uppercase text-[12px] tracking-widest shadow-2xl border border-white/10 rotate-[-5deg]">
-                            نفدت الكمية
+                        <div className="bg-zinc-800 text-white px-6 py-2 rounded-full font-black uppercase text-[12px] tracking-widest shadow-2xl border border-white/10 rotate-[-5deg]">
+                            خلصان
                         </div>
                     </div>
                 )}
@@ -74,7 +74,7 @@ const ProductCard = ({ product }) => {
 
             <div className="p-6">
                 <div className="mb-3 text-right">
-                    {/* اسم القسم بلون هادي */}
+                    {/* اسم القسم */}
                     <div className="flex items-center gap-1 text-zinc-500 mb-1">
                         <Store size={12} />
                         <span className="text-[10px] font-bold uppercase tracking-wider">
@@ -89,22 +89,21 @@ const ProductCard = ({ product }) => {
 
                 <div className="flex items-center justify-between gap-2 mb-4">
                     <div className="flex items-center gap-1">
-                        <span className="text-hot-pink font-black text-2xl italic tracking-tighter">
+                        <span className="text-orange-500 font-black text-2xl italic tracking-tighter">
                             {product.Price}
                         </span>
                         <span className="text-[10px] font-bold text-zinc-500 mt-1">جنيه</span>
                     </div>
                     
-                    {/* حالة المخزن باللغة العربية */}
                     {isLowStock && (
-                        <div className="bg-amber-500/10 text-amber-500 px-2 py-1 rounded-lg font-black text-[9px] flex items-center gap-1 animate-pulse border border-amber-500/20">
+                        <div className="bg-orange-500/10 text-orange-500 px-2 py-1 rounded-lg font-black text-[9px] flex items-center gap-1 animate-pulse border border-orange-500/20">
                             <Timer size={10} />
-                            متبقي {product.Stock} قطعة
+                            فاضل {product.Stock} قطعة
                         </div>
                     )}
                 </div>
 
-                {/* زر الإضافة للسلة */}
+                {/* زر الإضافة للسلة - أسود وبرتقالي */}
                 <button
                     onClick={handleCart}
                     disabled={isSoldOut}
@@ -112,7 +111,7 @@ const ProductCard = ({ product }) => {
                     className={`w-full py-4 rounded-2xl font-black text-[14px] flex items-center justify-center gap-2 transition-all border-none relative z-[40] 
                     ${isSoldOut
                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                        : 'bg-white text-black hover:bg-hot-pink hover:text-white active:scale-95 shadow-lg shadow-white/5 cursor-pointer'
+                        : 'bg-orange-500 text-black hover:bg-white active:scale-95 shadow-lg shadow-orange-500/10 cursor-pointer'
                     }`}
                 >
                     {isSoldOut ? (

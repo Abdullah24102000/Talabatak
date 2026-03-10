@@ -7,7 +7,7 @@
     /* رمادي غامق جداً للخلفية */
     --color-medium-gray: #2D2D2D;
     /* رمادي للمربعات والحدود */
-    --color-deep-black: #FF5C00;
+    --color-deep-black: #000;
 }
 
 body {
