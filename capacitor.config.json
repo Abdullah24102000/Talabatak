@@ -1,0 +1,11 @@
+{
+  "appId": "com.talabatak.app",
+  "appName": "talabatak",
+  "webDir": "dist",
+  "server": {
+    "allowNavigation": [
+      "wa.me",
+      "*.whatsapp.com"
+    ]
+  }
+}

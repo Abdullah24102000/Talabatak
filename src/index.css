@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-    --color-hot-pink: #FF0;
-    --color-dark-pink: #FF0;
+    --color-hot-pink: ##f97316;
+    --color-dark-pink: #f97316;
     --color-dark-gray: #1A1A1A;
     /* رمادي غامق جداً للخلفية */
     --color-medium-gray: #2D2D2D;

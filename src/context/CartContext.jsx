@@ -12,6 +12,12 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('talabatak_cart', JSON.stringify(cart));
     }, [cart]);
 
+    // --- التعديل هنا: إضافة دالة مسح السلة ---
+    const clearCart = () => {
+        setCart([]);
+        localStorage.removeItem('talabatak_cart');
+    };
+
     const subtotal = cart.reduce((acc, item) => {
         const price = typeof item.Price === 'string' 
             ? parseFloat(item.Price.replace(/[^\d.]/g, '')) 
@@ -22,7 +28,11 @@ export const CartProvider = ({ children }) => {
     const addToCart = (product) => {
         setCart(prev => {
             const exists = prev.find(item => item.id === product.id);
-            if (exists) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+            if (exists) {
+                return prev.map(item => 
+                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            }
             return [...prev, { ...product, quantity: 1 }];
         });
     };
@@ -37,9 +47,11 @@ export const CartProvider = ({ children }) => {
     };
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, subtotal }}>
+        // --- التعديل هنا: ضفنا clearCart جوه الـ value ---
+        <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, subtotal, clearCart }}>
             {children}
         </CartContext.Provider>
     );
 };
+
 export const useCart = () => useContext(CartContext);

@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { ShoppingCart, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, ArrowRight, ArrowLeft, Check } from 'lucide-react'; // أضفنا أيقونة Check
+import toast from 'react-hot-toast'; // استيراد التوستر
 
 const Hero = ({ products }) => {
     const { addToCart } = useCart();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [added, setAdded] = useState(false); // حالة التنبيه البصري للزرار
 
-    // جلب اللغة الحالية
-    const lang = localStorage.getItem('lang') || 'ar'; // الافتراضي عربي
+    const lang = localStorage.getItem('lang') || 'ar'; 
 
-    // فلترة المنتجات التي عليها خصومات فقط لعرضها في السلايدر
     const saleProducts = products.filter(p => p.oldPrice && p.oldPrice > p.Price);
 
     useEffect(() => {
-        if (saleProducts.length <= 1) return;
+        if (saleProducts.length <= 1 || added) return; // نوقف السلايدر مؤقتاً لو العميل بيدوس إضافة
         const interval = setInterval(() => {
             handleNext();
         }, 5000);
         return () => clearInterval(interval);
-    }, [saleProducts.length, currentIndex]);
+    }, [saleProducts.length, currentIndex, added]);
 
     const handleNext = () => {
         setCurrentIndex((prev) => (prev + 1) % saleProducts.length);
@@ -26,6 +26,33 @@ const Hero = ({ products }) => {
 
     const handlePrev = () => {
         setCurrentIndex((prev) => (prev - 1 + saleProducts.length) % saleProducts.length);
+    };
+
+    // دالة الإضافة المحدثة
+    const handleAddToCart = (product) => {
+        if (!added) {
+            addToCart(product);
+            setAdded(true);
+
+            // إظهار الإشعار
+            toast.success(`${product.Name} اتضاف للسلة!`, {
+                style: {
+                    border: '1px solid #f97316',
+                    padding: '16px',
+                    color: '#fff',
+                    background: '#18181b',
+                    borderRadius: '20px',
+                    fontWeight: 'bold',
+                    direction: 'rtl'
+                },
+                iconTheme: {
+                    primary: '#f97316',
+                    secondary: '#fff',
+                },
+            });
+
+            setTimeout(() => setAdded(false), 2000);
+        }
     };
 
     if (saleProducts.length === 0) return null;
@@ -36,7 +63,7 @@ const Hero = ({ products }) => {
         <div className="relative w-full bg-black overflow-hidden py-6 md:py-12 border-b border-white/5" dir="rtl">
             <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-6 md:gap-10">
 
-                {/* المحتوى النصي - اليمين */}
+                {/* المحتوى النصي */}
                 <div className="flex-1 text-right space-y-4 z-10">
                     <div className="inline-block bg-orange-500 text-black px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase">
                         {lang === 'en' ? 'Limited Offer' : 'عرض محدود لفترة وجيزة'}
@@ -63,29 +90,41 @@ const Hero = ({ products }) => {
                     </div>
 
                     <button
-                        onClick={() => addToCart(current)}
-                        className="group flex items-center gap-3 bg-orange-500 text-black px-8 py-4 rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-white transition-all duration-300 cursor-pointer border-none shadow-xl shadow-orange-500/10"
+                        onClick={() => handleAddToCart(current)}
+                        disabled={added}
+                        className={`group flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase text-[11px] tracking-widest transition-all duration-300 cursor-pointer border-none shadow-xl ${
+                            added 
+                            ? 'bg-green-500 text-white shadow-green-500/10' 
+                            : 'bg-orange-500 text-black hover:bg-white shadow-orange-500/10'
+                        }`}
                     >
-                        <ShoppingCart className="w-5 h-5" />
-                        {lang === 'en' ? 'Add to Cart' : 'أضف للطلب الآن'}
+                        {added ? (
+                            <>
+                                <Check className="w-5 h-5" />
+                                {lang === 'en' ? 'Added Successfully' : 'تمت الإضافة بنجاح'}
+                            </>
+                        ) : (
+                            <>
+                                <ShoppingCart className="w-5 h-5" />
+                                {lang === 'en' ? 'Add to Cart' : 'أضف للطلب الآن'}
+                            </>
+                        )}
                     </button>
                 </div>
 
-                {/* صورة المنتج - اليسار */}
+                {/* صورة المنتج */}
                 <div className="flex-1 relative flex justify-center items-center mt-4 md:mt-0">
-                    {/* هالة ضوئية برتقالية خلف المنتج */}
-                    <div className="absolute w-48 h-48 md:w-[400px] md:h-[400px] bg-orange-500/10 rounded-full blur-[100px]"></div>
+                    <div className={`absolute w-48 h-48 md:w-[400px] md:h-[400px] rounded-full blur-[100px] transition-colors duration-500 ${added ? 'bg-green-500/20' : 'bg-orange-500/10'}`}></div>
                     
-                    <div className="relative z-10 p-2 bg-gradient-to-br from-orange-500/20 to-transparent rounded-[2.5rem]">
+                    <div className={`relative z-10 p-2 rounded-[2.5rem] transition-all duration-500 bg-gradient-to-br ${added ? 'from-green-500/20' : 'from-orange-500/20'} to-transparent`}>
                         <img
                             key={current.id}
                             src={Array.isArray(current.ImgUrl) ? current.ImgUrl[0] : current.ImgUrl}
                             alt={current.Name}
-                            className="w-full max-w-[250px] md:max-w-[450px] h-[300px] md:h-[480px] object-cover rounded-[2rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-700 animate-in fade-in zoom-in-95"
+                            className="w-full max-w-[250px] md:max-w-[450px] h-[300px] md:h-[480px] object-cover rounded-[2rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-all duration-700 animate-in fade-in zoom-in-95"
                         />
                     </div>
                     
-                    {/* شارة الخصم فوق الصورة */}
                     <div className="absolute top-0 right-0 md:right-10 bg-white text-black w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center rotate-12 z-20 border-4 border-black font-black italic">
                         <span className="text-[10px] uppercase">Save</span>
                         <span className="text-lg">-{Math.round(((current.oldPrice - current.Price) / current.oldPrice) * 100)}%</span>

@@ -6,7 +6,7 @@ import { translations } from '../translations';
 import { ShoppingBag, Heart, X, Trash2, Languages, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
-    const [lang, setLang] = useState(localStorage.getItem('lang') || 'ar'); // الديفولت عربي
+    const [lang, setLang] = useState(localStorage.getItem('lang') || 'ar');
     const t = translations[lang];
     const { cart, removeFromCart, updateQuantity, subtotal, addToCart } = useCart();
     const { wishlist, toggleWishlist } = useWishlist();
@@ -15,7 +15,6 @@ const Navbar = () => {
     const [isCatOpen, setIsCatOpen] = useState(false);
     const navigate = useNavigate();
 
-    // الأقسام المحدثة: حلويات بدلاً من سوبر ماركت
     const categories = [
         { id: 'RESTAURANTS', en: 'Restaurants', ar: 'المطاعم' },
         { id: 'SWEETS', en: 'Sweets', ar: 'الحلويات' },
@@ -39,11 +38,9 @@ const Navbar = () => {
 
     return (
         <>
-            {/* الناف بار الأساسي - Orange & Black Theme */}
             <nav className="fixed top-0 left-0 w-full z-[100] bg-black/95 backdrop-blur-xl border-b border-white/5 h-20" dir="rtl">
                 <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
                     
-                    {/* الجانب الأيمن: اللوجو والروابط */}
                     <div className="flex items-center gap-8">
                         <Link to="/" className="text-3xl font-black italic tracking-tighter text-white no-underline">
                             طلباتك<span className="text-orange-500">.</span>
@@ -85,20 +82,29 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* الجانب الأيسر: الأيقونات واللغة */}
                     <div className="flex items-center gap-4">
                         <button onClick={toggleLang} className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-full text-[12px] font-black flex items-center gap-2 cursor-pointer hover:bg-orange-500 hover:text-black transition-all">
                             <Languages size={16}/> {t.langBtn}
                         </button>
                         
+                        {/* المفضلة - الدائرة المحدثة */}
                         <button onClick={() => setIsWishOpen(true)} className="relative text-white p-2 bg-transparent border-none cursor-pointer group">
                             <Heart size={26} className={wishlist.length > 0 ? "text-orange-500" : "text-white group-hover:text-orange-500"} fill={wishlist.length > 0 ? "currentColor" : "none"} />
-                            {wishlist.length > 0 && <span className="absolute top-0 right-0 bg-orange-500 text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg">{wishlist.length}</span>}
+                            {wishlist.length > 0 && (
+                                <span className="absolute top-0 right-0 bg-orange-500 text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg border border-black/10">
+                                    {wishlist.length}
+                                </span>
+                            )}
                         </button>
 
+                        {/* العربة - الدائرة المحدثة */}
                         <button onClick={() => setIsCartOpen(true)} className="relative text-white p-2 bg-transparent border-none cursor-pointer group">
                             <ShoppingBag size={26} className="group-hover:text-orange-500 transition-colors" />
-                            {cart.length > 0 && <span className="absolute top-0 right-0 bg-orange-500 text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg">{cart.length}</span>}
+                            {cart.length > 0 && (
+                                <span className="absolute top-0 right-0 bg-orange-500 text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg border border-black/10">
+                                    {cart.length}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -106,7 +112,7 @@ const Navbar = () => {
 
             <div className="h-20 w-full block"></div>
 
-            {/* سلة المفضلات - Orange Styling */}
+            {/* سلة المفضلات */}
             <div className={`fixed top-0 left-0 h-full w-full md:w-[400px] bg-[#0a0a0a] z-[1000] border-r border-white/10 transform transition-transform duration-500 shadow-2xl ${isWishOpen ? 'translate-x-0' : '-translate-x-full'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="p-8 border-b border-white/5 flex justify-between items-center text-white">
                     <h2 className="text-xl font-black italic uppercase">قائمة <span className="text-orange-500">الأمنيات</span></h2>
@@ -132,7 +138,7 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* سلة التسوق - Orange Styling */}
+            {/* سلة التسوق */}
             <div className={`fixed top-0 left-0 h-full w-full md:w-[400px] bg-[#0a0a0a] z-[1000] border-r border-white/10 transform transition-transform duration-500 shadow-2xl ${isCartOpen ? 'translate-x-0' : '-translate-x-full'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <div className="p-8 border-b border-white/5 flex justify-between items-center text-white">
                     <h2 className="text-xl font-black italic uppercase">سلة <span className="text-orange-500">الطلبات</span></h2>

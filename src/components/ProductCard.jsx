@@ -1,11 +1,13 @@
-import React from 'react';
-import { ShoppingBag, AlertCircle, Timer, Heart, Store } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingBag, AlertCircle, Timer, Heart, Store, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext'; 
 import { useWishlist } from '../context/WishlistContext'; 
+import toast from 'react-hot-toast';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
     const { toggleWishlist, isInWishlist } = useWishlist();
+    const [added, setAdded] = useState(false);
     
     const isSoldOut = product.Stock <= 0;
     const isLowStock = product.Stock > 0 && product.Stock <= 5;
@@ -20,12 +22,27 @@ const ProductCard = ({ product }) => {
     const handleCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!isSoldOut) {
+        
+        if (!isSoldOut && !added) {
             addToCart(product);
+            setAdded(true);
+            toast.success(`${product.Name} اتضاف للسلة!`, {
+                style: {
+                    border: '1px solid #f97316',
+                    padding: '12px',
+                    color: '#fff',
+                    background: '#18181b',
+                    borderRadius: '15px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    direction: 'rtl',
+                },
+                iconTheme: { primary: '#f97316', secondary: '#fff' },
+            });
+            setTimeout(() => setAdded(false), 2000);
         }
     };
 
-    // تحديث دالة الأقسام لتتماشى مع التعديلات الجديدة
     const getCategoryName = (catId) => {
         switch(catId) {
             case 'RESTAURANTS': return 'مطاعم';
@@ -37,93 +54,88 @@ const ProductCard = ({ product }) => {
 
     return (
         <div 
-            className="relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] overflow-hidden group hover:border-orange-500/30 transition-all duration-500" 
+            className={`relative flex flex-col h-full bg-zinc-900/40 border rounded-[2rem] overflow-hidden group transition-all duration-500 ${added ? 'border-green-500/50' : 'border-white/5 hover:border-orange-500/30'}`} 
             dir="rtl"
         >
-            
-            {/* زر المفضلة - تم تغيير اللون للبرتقالي عند التفعيل */}
+            {/* زر المفضلة */}
             <button 
                 onClick={handleFavorite}
                 type="button"
-                className="absolute top-4 right-4 z-[40] p-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 text-white hover:scale-110 active:scale-90 transition-all cursor-pointer"
+                className="absolute top-3 right-3 z-[40] p-1.5 rounded-lg bg-black/50 backdrop-blur-md border border-white/10 text-white hover:scale-110 active:scale-90 transition-all cursor-pointer"
             >
                 <Heart 
-                    size={16} 
-                    fill={isFavorite ? "#f97316" : "none"} // لون برتقالي Orange-500
+                    size={14} 
+                    fill={isFavorite ? "#f97316" : "none"} 
                     color={isFavorite ? "#f97316" : "white"} 
                 />
             </button>
 
-            {/* منطقة الصورة */}
-            <div className="relative aspect-square overflow-hidden bg-white/5 flex items-center justify-center p-4">
+            {/* النصف الأول: منطقة الصورة (مالية المكان تماماً) */}
+            <div className="relative h-48 w-full overflow-hidden bg-zinc-800">
                 <img
                     src={Array.isArray(product.ImgUrl) ? product.ImgUrl[0] : product.ImgUrl}
                     alt={product.Name}
-                    className={`max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110 
+                    className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 
                     ${isSoldOut ? 'grayscale opacity-50' : ''}`}
                 />
 
                 {isSoldOut && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] z-10">
-                        <div className="bg-zinc-800 text-white px-6 py-2 rounded-full font-black uppercase text-[12px] tracking-widest shadow-2xl border border-white/10 rotate-[-5deg]">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] z-10">
+                        <div className="bg-zinc-800 text-white px-4 py-1.5 rounded-full font-black uppercase text-[10px] tracking-widest shadow-2xl border border-white/10 rotate-[-5deg]">
                             خلصان
                         </div>
                     </div>
                 )}
             </div>
 
-            <div className="p-6">
-                <div className="mb-3 text-right">
-                    {/* اسم القسم */}
+            {/* النصف الثاني: المحتوى (الوصف والسعر والزرار) */}
+            <div className="flex flex-col flex-grow p-4 justify-between">
+                <div>
                     <div className="flex items-center gap-1 text-zinc-500 mb-1">
-                        <Store size={12} />
-                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                        <Store size={10} />
+                        <span className="text-[9px] font-bold uppercase tracking-wider">
                             {getCategoryName(product.Category)}
                         </span>
                     </div>
-                    {/* اسم المنتج */}
-                    <h3 className="text-white font-bold text-lg leading-snug break-words line-clamp-2 h-14">
+                    <h3 className="text-white font-bold text-base leading-tight line-clamp-2 h-10 mb-2">
                         {product.Name}
                     </h3>
-                </div>
 
-                <div className="flex items-center justify-between gap-2 mb-4">
-                    <div className="flex items-center gap-1">
-                        <span className="text-orange-500 font-black text-2xl italic tracking-tighter">
-                            {product.Price}
-                        </span>
-                        <span className="text-[10px] font-bold text-zinc-500 mt-1">جنيه</span>
-                    </div>
-                    
-                    {isLowStock && (
-                        <div className="bg-orange-500/10 text-orange-500 px-2 py-1 rounded-lg font-black text-[9px] flex items-center gap-1 animate-pulse border border-orange-500/20">
-                            <Timer size={10} />
-                            فاضل {product.Stock} قطعة
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                        <div className="flex items-center gap-1">
+                            <span className="text-orange-500 font-black text-xl italic tracking-tighter">
+                                {product.Price}
+                            </span>
+                            <span className="text-[9px] font-bold text-zinc-500 mt-1">جنيه</span>
                         </div>
-                    )}
+                        
+                        {isLowStock && (
+                            <div className="bg-orange-500/10 text-orange-500 px-2 py-0.5 rounded-md font-black text-[8px] flex items-center gap-1 animate-pulse border border-orange-500/20">
+                                <Timer size={8} />
+                                باقي {product.Stock}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* زر الإضافة للسلة - أسود وبرتقالي */}
                 <button
                     onClick={handleCart}
-                    disabled={isSoldOut}
+                    disabled={isSoldOut || added}
                     type="button"
-                    className={`w-full py-4 rounded-2xl font-black text-[14px] flex items-center justify-center gap-2 transition-all border-none relative z-[40] 
+                    className={`w-full py-3 rounded-xl font-black text-[12px] flex items-center justify-center gap-2 transition-all border-none relative z-[40] 
                     ${isSoldOut
                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                        : added
+                        ? 'bg-green-600 text-white cursor-default'
                         : 'bg-orange-500 text-black hover:bg-white active:scale-95 shadow-lg shadow-orange-500/10 cursor-pointer'
                     }`}
                 >
                     {isSoldOut ? (
-                        <>
-                            <AlertCircle size={16} />
-                            غير متوفر
-                        </>
+                        <><AlertCircle size={14} /> غير متوفر</>
+                    ) : added ? (
+                        <><Check size={16} /> تم</>
                     ) : (
-                        <>
-                            <ShoppingBag size={16} />
-                            أضف للطلب
-                        </>
+                        <><ShoppingBag size={14} /> أضف للطلب</>
                     )}
                 </button>
             </div>
