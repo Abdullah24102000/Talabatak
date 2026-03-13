@@ -28,7 +28,7 @@ const CheckoutPage = () => {
     const [countryCode, setCountryCode] = useState('+20');
     const [position, setPosition] = useState(null);
 
-    const lang = localStorage.getItem('lang') || 'ar'; // افتراضياً عربي بناءً على طلبك
+    const lang = localStorage.getItem('lang') || 'ar';
     const t = translations[lang];
 
     const subtotal = useMemo(() => cart.reduce((acc, item) => {
@@ -79,6 +79,7 @@ const CheckoutPage = () => {
 
         try {
             const fullPhone = `${countryCode}${formData.phone}`;
+            // تصحيح رابط الخريطة بإضافة علامة الـ $
             const googleMapsLink = position ? `https://www.google.com/maps?q=${position.lat},${position.lng}` : '';
 
             const { error: supabaseError } = await supabase
@@ -110,8 +111,11 @@ const CheckoutPage = () => {
             localStorage.removeItem('sheon_cart');
             
             setShowSuccess(true);
+
+            // استخدام window.location.href لضمان فتح الواتساب في المتصفحات والموبايل
+            const whatsappUrl = `https://wa.me/201029472254?text=${message}`;
             setTimeout(() => {
-                window.open(`https://wa.me/201029472254?text=${message}`, '_blank');
+                window.location.href = whatsappUrl;
             }, 2500);
 
         } catch (err) {
@@ -141,7 +145,6 @@ const CheckoutPage = () => {
 
             <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
 
-                {/* --- القسم الأول: ملخص المنتجات (يظهر فوق في الموبايل) --- */}
                 <div className="bg-zinc-900/50 p-6 md:p-8 rounded-[2.5rem] border border-white/5 h-fit backdrop-blur-md order-1 lg:order-2">
                     <h3 className="text-[20px] font-black mb-6 text-orange-500 flex items-center gap-3 italic uppercase">
                         <ShoppingBag size={22} /> ملخص الطلب
@@ -177,7 +180,6 @@ const CheckoutPage = () => {
                     </div>
                 </div>
 
-                {/* --- القسم الثاني: فورم البيانات (يظهر تحت في الموبايل) --- */}
                 <div className="bg-zinc-900 p-6 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl order-2 lg:order-1">
                     <h2 className="text-xl font-black mb-8 italic uppercase border-orange-500 border-r-4 pr-4 text-right">
                         بيانات التوصيل
@@ -203,12 +205,15 @@ const CheckoutPage = () => {
                             <label className="text-[10px] text-zinc-500 flex items-center gap-2 uppercase font-black">
                                 <MapPin size={14} className="text-orange-500" /> حدد موقعك على الخريطة
                             </label>
-                            <div className="h-40 w-full rounded-2xl overflow-hidden border border-white/10">
-                                <MapContainer center={[31.1303, 33.8032]} zoom={13} style={{ height: '100%', width: '100%' }}>
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                    <LocationMarker />
-                                </MapContainer>
-                            </div>
+                            {/* تم إضافة شرط عدم ظهور النجاح هنا لإخفاء الخريطة وأدواتها نهائياً عند التأكيد */}
+                            {!showSuccess && (
+                                <div className="h-40 w-full rounded-2xl overflow-hidden border border-white/10 relative z-0">
+                                    <MapContainer center={[31.1303, 33.8032]} zoom={13} style={{ height: '100%', width: '100%' }}>
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                        <LocationMarker />
+                                    </MapContainer>
+                                </div>
+                            )}
                         </div>
 
                         <textarea required className="w-full bg-black border border-white/10 p-4 rounded-2xl text-white focus:border-orange-500 outline-none min-h-[80px] text-right" 
@@ -217,7 +222,7 @@ const CheckoutPage = () => {
                                onChange={e => setFormData({ ...formData, address: e.target.value })} />
 
                         <button type="submit" disabled={loading || !isFormValid}
-                                className={`w-full py-5 rounded-2xl font-black uppercase transition-all flex items-center justify-center gap-3
+                                 className={`w-full py-5 rounded-2xl font-black uppercase transition-all flex items-center justify-center gap-3
                                     ${!isFormValid ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-orange-500 text-black hover:bg-white shadow-xl shadow-orange-500/20 active:scale-95'}`}>
                             {loading ? <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : 
                             <><MessageCircle size={20}/> تأكيد الطلب</>}
