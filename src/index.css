@@ -17,3 +17,10 @@ body {
     margin: 0;
     padding: 0;
 }
+
+@layer base {
+    ::selection {
+      background-color: #f97316; /* لون الـ orange-500 بتاع براند طلباتك */
+      color: #000000; /* لون الخط لما يتحدد */
+    }
+  }

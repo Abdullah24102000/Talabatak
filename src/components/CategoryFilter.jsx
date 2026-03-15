@@ -7,7 +7,8 @@ const CategoryFilter = ({ activeCategory, onFilterChange }) => {
     const categories = [
         { id: 'ALL', ar: 'الكل', en: 'All' },
         { id: 'RESTAURANTS', ar: 'المطاعم', en: 'Restaurants' },
-        { id: 'SWEETS', ar: 'الحلويات', en: 'Sweets' }, // استبدال السوبر ماركت بالحلويات
+        { id: 'SWEETS', ar: 'الحلويات', en: 'Sweets' },
+        { id: 'SUPERMARKET', ar: 'السوبر ماركت', en: 'Supermarket' }, // إضافة القسم الجديد هنا
         { id: 'PERSONAL_DELIVERY', ar: 'توصيل سكوتر', en: 'Scooter Delivery' }
     ];
 
@@ -19,6 +20,7 @@ const CategoryFilter = ({ activeCategory, onFilterChange }) => {
             {categories.map(cat => (
                 <button 
                     key={cat.id}
+                    // لما يدوس هنا، الـ Home هيعرف إن الـ activeCategory بقى SUPERMARKET
                     onClick={() => onFilterChange(cat.id)}
                     className={`px-6 py-2 rounded-full text-[13px] md:text-[15px] font-black uppercase tracking-widest transition-all cursor-pointer border
                     ${activeCategory === cat.id 

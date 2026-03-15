@@ -60,13 +60,15 @@ const AdminDashboard = () => {
     const handleAddProduct = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const imgArray = newProduct.ImgUrl.split(',').map(u => u.trim());
+        
+        // تعديل: نأخذ أول رابط فقط لأن الحقل في سوبابيز هو text وليس array
+        const firstImg = newProduct.ImgUrl.split(',')[0].trim();
         
         const { error } = await supabase.from('Products').insert([{
             ...newProduct,
             Price: parseFloat(newProduct.Price),
             Stock: parseInt(newProduct.Stock),
-            ImgUrl: imgArray
+            ImgUrl: firstImg // إرسال نص واحد
         }]);
 
         if (!error) {
@@ -74,7 +76,8 @@ const AdminDashboard = () => {
             setNewProduct({ Name: '', Price: '', vendor_id: vendors[0]?.id, ImgUrl: '', Stock: 0 });
             fetchProducts();
         } else {
-            alert("خطأ في الإضافة");
+            console.error(error);
+            alert("خطأ في الإضافة: تأكد من إعدادات قاعدة البيانات");
         }
         setLoading(false);
     };
@@ -88,9 +91,14 @@ const AdminDashboard = () => {
     const handleUpdateProduct = async (e) => {
         e.preventDefault();
         setEditLoading(true);
-        const imgArray = typeof editingProduct.ImgUrl === 'string' 
-            ? editingProduct.ImgUrl.split(',').map(u => u.trim()) 
-            : editingProduct.ImgUrl;
+
+        // تعديل: معالجة الصورة لضمان إرسال نص واحد فقط
+        let imageUrl = editingProduct.ImgUrl;
+        if (Array.isArray(imageUrl)) {
+            imageUrl = imageUrl[0];
+        } else if (typeof imageUrl === 'string') {
+            imageUrl = imageUrl.split(',')[0].trim();
+        }
 
         const { error } = await supabase
             .from('Products')
@@ -98,7 +106,7 @@ const AdminDashboard = () => {
                 Name: editingProduct.Name,
                 Price: parseFloat(editingProduct.Price),
                 Stock: parseInt(editingProduct.Stock),
-                ImgUrl: imgArray,
+                ImgUrl: imageUrl,
                 vendor_id: editingProduct.vendor_id
             })
             .eq('id', editingProduct.id);
@@ -107,6 +115,9 @@ const AdminDashboard = () => {
             alert("تم تحديث المنتج بنجاح ✅");
             setEditingProduct(null);
             fetchProducts();
+        } else {
+            console.error(error);
+            alert("حدث خطأ أثناء التحديث");
         }
         setEditLoading(false);
     };
@@ -347,6 +358,7 @@ const AdminDashboard = () => {
                             {filteredProducts.map(prod => (
                                 <div key={prod.id} className="bg-zinc-900/40 border border-white/5 rounded-[2rem] overflow-hidden group hover:border-orange-500/30 transition-all shadow-xl relative">
                                     <div className="aspect-square bg-black relative overflow-hidden">
+                                        {/* تعديل العرض ليدعم النص الواحد أو المصفوفة */}
                                         <img src={Array.isArray(prod.ImgUrl) ? prod.ImgUrl[0] : prod.ImgUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[8px] font-black text-orange-500">{vendors.find(v => v.id == prod.vendor_id)?.name}</div>
                                     </div>
