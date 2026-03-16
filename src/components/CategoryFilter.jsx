@@ -1,35 +1,39 @@
 import React from 'react';
 
 const CategoryFilter = ({ activeCategory, onFilterChange }) => {
-    // جلب اللغة من localStorage لضمان التزامن
     const lang = localStorage.getItem('lang') || 'ar'; 
 
     const categories = [
-        { id: 'ALL', ar: 'الكل', en: 'All' },
-        { id: 'RESTAURANTS', ar: 'المطاعم', en: 'Restaurants' },
-        { id: 'SWEETS', ar: 'الحلويات', en: 'Sweets' },
-        { id: 'SUPERMARKET', ar: 'السوبر ماركت', en: 'Supermarket' }, // إضافة القسم الجديد هنا
-        { id: 'PERSONAL_DELIVERY', ar: 'توصيل سكوتر', en: 'Scooter Delivery' }
+        { id: 'ALL', ar: '🏠 الرئيسية', en: 'Home' },
+        { id: 'RESTAURANTS', ar: '🍔 المطاعم', en: 'Food' },
+        { id: 'SWEETS', ar: '🍰 الحلويات', en: 'Sweets' },
+        { id: 'SUPERMARKET', ar: '🛒 الماركت', en: 'Market' },
+        { id: 'VEGETABLES', ar: '🥦 خضروات', en: 'Veggie' }, // القسم الجديد
+        { id: 'PERSONAL_DELIVERY', ar: '🚀 سكوتر', en: 'Scooter' }
     ];
 
     return (
-        <div 
-            className="flex flex-wrap justify-center gap-3 mb-10 relative z-50" 
-            dir={lang === 'ar' ? 'rtl' : 'ltr'}
-        >
-            {categories.map(cat => (
-                <button 
-                    key={cat.id}
-                    // لما يدوس هنا، الـ Home هيعرف إن الـ activeCategory بقى SUPERMARKET
-                    onClick={() => onFilterChange(cat.id)}
-                    className={`px-6 py-2 rounded-full text-[13px] md:text-[15px] font-black uppercase tracking-widest transition-all cursor-pointer border
-                    ${activeCategory === cat.id 
-                        ? 'bg-orange-500 text-black border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.4)]' 
-                        : 'bg-white/5 text-zinc-400 border-white/10 hover:border-orange-500 hover:text-white'}`}
-                >
-                    {lang === 'ar' ? cat.ar : cat.en}
-                </button>
-            ))}
+        <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-lg border-b border-white/5 mb-8 -mx-4 px-4 overflow-x-auto no-scrollbar">
+            <div 
+                className="flex items-center justify-start md:justify-center gap-2 py-4 min-w-max" 
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
+            >
+                {categories.map(cat => (
+                    <button 
+                        key={cat.id}
+                        onClick={() => onFilterChange(cat.id)}
+                        className={`px-5 py-2.5 rounded-2xl text-[12px] md:text-[14px] font-black uppercase tracking-tighter transition-all relative
+                        ${activeCategory === cat.id 
+                            ? 'text-orange-500 bg-orange-500/10' 
+                            : 'text-zinc-500 hover:text-white'}`}
+                    >
+                        {lang === 'ar' ? cat.ar : cat.en}
+                        {activeCategory === cat.id && (
+                            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-orange-500 rounded-full"></span>
+                        )}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
