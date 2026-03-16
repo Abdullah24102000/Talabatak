@@ -53,25 +53,31 @@ const Home = () => {
 
   const sendMarketOrder = () => {
     const validItems = marketItems.filter(item => item.name.trim() !== '');
+    
     if (validItems.length === 0) {
-      alert("يرجى كتابة طلباتك أولاً!");
-      return;
+        alert("يرجى كتابة طلباتك أولاً!");
+        return;
     }
+
+    // هنا ملمسناش الـ clearCart بتاعتك الأصلية
     clearCart();
+
     validItems.forEach((item, index) => {
-      addToCart({
-        id: `custom-${index}-${Date.now()}`,
-        Name: item.name,
-        Price: "سعر المحل", 
-        quantity: item.qty, // يقبل نصوص مثل "نص كيلو"
-        ImgUrl: activeCategory === 'VEGETABLES' 
-          ? 'https://cdn-icons-png.flaticon.com/512/2329/2329895.png' 
-          : 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png',
-        isMarketItem: true 
-      });
+        addToCart({
+            id: `custom-${index}-${Date.now()}`,
+            Name: item.name,
+            Price: "سعر المحل", 
+            // التعديل هنا: شلنا parseInt وخليناها تبعت القيمة زي ما هي نص
+            quantity: item.qty || "1", 
+            ImgUrl: activeCategory === 'VEGETABLES' 
+                ? 'https://cdn-icons-png.flaticon.com/512/2329/2329895.png' 
+                : 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png',
+            isMarketItem: true 
+        });
     });
+
     navigate('/checkout');
-  };
+};
 
   // --- Logic التوصيل الشخصي ---
   const handleGetCurrentLocation = () => {

@@ -18,6 +18,8 @@ const Navbar = () => {
     const categories = [
         { id: 'RESTAURANTS', en: 'Restaurants', ar: 'المطاعم' },
         { id: 'SWEETS', en: 'Sweets', ar: 'الحلويات' },
+        { id: 'SUPERMARKET', en: 'Supermarket', ar: 'الماركت' },
+        { id: 'VEGETABLES', en: 'Vegetables', ar: 'خضروات وفواكه' },
         { id: 'PERSONAL_DELIVERY', en: 'Scooter Delivery', ar: 'توصيل سكوتر' }
     ];
 
@@ -38,7 +40,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full z-[100] bg-black/95 backdrop-blur-xl border-b border-white/5 h-20" dir="rtl">
+            <nav className="fixed top-0 left-0 w-full z-[100] bg-black/95 backdrop-blur-xl h-20" dir="rtl" dir="rtl">
                 <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
                     
                     <div className="flex items-center gap-8">

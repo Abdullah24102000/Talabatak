@@ -8,13 +8,15 @@ const CategoryFilter = ({ activeCategory, onFilterChange }) => {
         { id: 'RESTAURANTS', ar: '🍔 المطاعم', en: 'Food' },
         { id: 'SWEETS', ar: '🍰 الحلويات', en: 'Sweets' },
         { id: 'SUPERMARKET', ar: '🛒 الماركت', en: 'Market' },
-        { id: 'VEGETABLES', ar: '🥦 خضروات', en: 'Veggie' }, // القسم الجديد
+        { id: 'VEGETABLES', ar: '🥦 خضروات', en: 'Veggie' },
         { id: 'PERSONAL_DELIVERY', ar: '🚀 سكوتر', en: 'Scooter' }
     ];
 
     return (
-        <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-lg border-b border-white/5 mb-8 -mx-4 px-4 overflow-x-auto no-scrollbar">
+        /* التعديل: ضفنا overflow-x-auto و -mx-4 عشان السكرول يملى الشاشة */
+        <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-lg H-20 mb-8 -mx-4 px-4 overflow-x-auto no-scrollbar">
             <div 
+                /* التعديل: justify-start للموبايل عشان السكرول يبان وبداية الأقسام تبان */
                 className="flex items-center justify-start md:justify-center gap-2 py-4 min-w-max" 
                 dir={lang === 'ar' ? 'rtl' : 'ltr'}
             >
@@ -22,7 +24,8 @@ const CategoryFilter = ({ activeCategory, onFilterChange }) => {
                     <button 
                         key={cat.id}
                         onClick={() => onFilterChange(cat.id)}
-                        className={`px-5 py-2.5 rounded-2xl text-[12px] md:text-[14px] font-black uppercase tracking-tighter transition-all relative
+                        /* التعديل: min-w-max و whitespace-nowrap عشان الكلام ميتكسرش تحت بعضه */
+                        className={`px-5 py-2.5 rounded-2xl text-[12px] md:text-[14px] font-black uppercase tracking-tighter transition-all relative whitespace-nowrap min-w-max
                         ${activeCategory === cat.id 
                             ? 'text-orange-500 bg-orange-500/10' 
                             : 'text-zinc-500 hover:text-white'}`}
