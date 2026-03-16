@@ -6,7 +6,6 @@ import Home from './pages/Home';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminDashboard from './pages/AdminDashboard';
 import { App as CapApp } from '@capacitor/app'; // ضفنا دي للتعامل مع الموبايل
-import { Analytics } from "@vercel/analytics/next";
 
 function App() {
 
@@ -39,7 +38,6 @@ function App() {
           </Routes>
         </div>
       </Router>
-      <Analytics />
     </CartProvider>
   );
 }

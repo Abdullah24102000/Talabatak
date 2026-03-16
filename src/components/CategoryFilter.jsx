@@ -14,7 +14,7 @@ const CategoryFilter = ({ activeCategory, onFilterChange }) => {
 
     return (
         /* التعديل: ضفنا overflow-x-auto و -mx-4 عشان السكرول يملى الشاشة */
-        <div className="sticky top-0 z-[100] bg-black/80 backdrop-blur-lg H-20 mb-8 -mx-4 px-4 overflow-x-auto no-scrollbar">
+        <div className="sticky top-0 z-100 bg-black/80 backdrop-blur-lg H-20 mb-8 -mx-4 px-4 overflow-x-auto no-scrollbar">
             <div 
                 /* التعديل: justify-start للموبايل عشان السكرول يبان وبداية الأقسام تبان */
                 className="flex items-center justify-start md:justify-center gap-2 py-4 min-w-max" 
